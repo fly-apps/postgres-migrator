@@ -1,0 +1,22 @@
+# fly.toml file generated for fly-pg-migration on 2021-10-12T22:07:59-05:00
+
+app = "fly-pg-migration"
+
+kill_signal = "SIGINT"
+kill_timeout = 5
+processes = []
+
+[env]
+   POSTGRES_PASSWORD="pass"
+
+[experimental]
+  auto_rollback = false
+
+[[services]]
+  processes = ["app"]
+  protocol = "tcp"
+
+[[mounts]]
+  source = "migration_data"
+  destination = "/data"
+
