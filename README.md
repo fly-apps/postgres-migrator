@@ -1,10 +1,8 @@
 # postgres-migrator
-A Fly app that works to assist with migrating Postgres data from one Postgres to another. 
-
 
 ## How it works
 
-This will work to perform a pg_dump against the specified source database and pg_restore it to the specified target.
+Performs a `pg_dump` against a specified source database and restores it into the specified target.
 
 
 1. Clone this project and launch a new app.
