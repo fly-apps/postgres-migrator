@@ -16,7 +16,7 @@ fly launch --name postgres-migration-tool
 fly secrets set SOURCE_DATABASE_URI=postgres://<user>:<password>@<hostname>:<port>/<database>
 
 # The target postgres database.
-fly secrets set TARGET_DATABASE_URI=postgres://<user>:<password>@<hostname>:<port>/<database>
+fly secrets set TARGET_DATABASE_URI=postgres://<user>:<password>@<hostname>:<port>
 
 ```
 
