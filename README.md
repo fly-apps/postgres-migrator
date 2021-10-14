@@ -10,7 +10,7 @@ Performs a `pg_dump` against a specified source database and restores it into th
 fly launch --name postgres-migration-tool
 ```
 
-2. Specify the SOURCE_DATABASE_URI and TARGET_DATABASE_URI as secrets.
+2. Specify the `SOURCE_DATABASE_URI` and `TARGET_DATABASE_URI` as secrets.
 ```shell
 # The source postgres database.
 fly secrets set SOURCE_DATABASE_URI=postgres://<user>:<password>@<hostname>:<port>/<database>
