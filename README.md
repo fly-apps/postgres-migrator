@@ -4,7 +4,7 @@
 
 Performs a `pg_dump` against a source database and restores it into the specified target.
 
-## How to perform the migration
+## Performing the migration
 
 1. Clone this project and update the Dockerfile's `PG_VERSION` to match the version of your target Postgres cluster.
 
