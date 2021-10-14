@@ -7,10 +7,7 @@ Performs a `pg_dump` against a source database and `pg_restores` it into the spe
 
 ## How to perform the migration
 
-1. Clone this project and launch a new app.
-```
-fly launch --name postgres-migration-tool
-```
+1. Clone this project and update the Dockerfile's `PG_VERSION` to match the Postgres version used by the target.
 
 2. Specify the `SOURCE_DATABASE_URI` and `TARGET_DATABASE_URI` as secrets.
 ```shell
@@ -22,14 +19,12 @@ fly secrets set TARGET_DATABASE_URI=postgres://<user>:<password>@<hostname>:<por
 
 ```
 
-3. Update the Dockerfile's PG_VERSION to match the Postgres version used by the target. 
-
-4. Deploy the app
+3. Launch the app
 ```
-fly deploy .
+fly launch --name postgres-migration-tool
 ```
 
-5. Initiate the migration process
+4. Initiate the migration process
 ```
 fly ssh console -C "migrate"
 ```
