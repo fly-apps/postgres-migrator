@@ -14,7 +14,7 @@ Performs a `pg_dump` against a source database and restores it into the specifie
 # The source postgres database.
 fly secrets set SOURCE_DATABASE_URI=postgres://<user>:<password>@<hostname>:<port>/<database>
 
-# The target postgres database ( Leave off the database name, unless the database already exists ).
+# The target postgres database ( Leave off the database name unless the database already exists ).
 fly secrets set TARGET_DATABASE_URI=postgres://<user>:<password>@<hostname>:<port>
 
 ```
