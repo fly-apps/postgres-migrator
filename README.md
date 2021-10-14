@@ -2,7 +2,7 @@
 
 ## How it works
 
-Performs a `pg_dump` against a source database and `pg_restores` it into the specified target.
+Performs a `pg_dump` against a source database and restores it into the specified target.
 
 
 ## How to perform the migration
