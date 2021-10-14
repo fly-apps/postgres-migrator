@@ -22,7 +22,9 @@ fly secrets set TARGET_DATABASE_URI=postgres://<user>:<password>@<hostname>:<por
 fly launch --name postgres-migration-tool
 ```
 
-4. Initiate the migration process
+4. Read the recommendations section below. :)
+
+5. Initiate the migration process
 ```
 fly ssh console -C "migrate"
 ```
