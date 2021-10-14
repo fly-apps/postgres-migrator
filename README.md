@@ -2,7 +2,7 @@
 
 ## How it works
 
-Performs a `pg_dump` against a specified source database and restores it into the specified target.
+Performs a `pg_dump` against a source database and `pg_restores` it into the specified target.
 
 
 1. Clone this project and launch a new app.
