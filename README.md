@@ -5,6 +5,8 @@
 Performs a `pg_dump` against a source database and `pg_restores` it into the specified target.
 
 
+## How to perform the migration
+
 1. Clone this project and launch a new app.
 ```
 fly launch --name postgres-migration-tool
