@@ -20,19 +20,14 @@ fly secrets set TARGET_DATABASE_URI=postgres://<user>:<password>@<hostname>:<por
 
 ```
 
-3. Provision a new volume to hold your migration data.
-```
-  fly volumes create migration_data --region iad --size 10
-```
+3. Update the Dockerfile's PG_VERSION to match the Postgres version used by the target. 
 
-4. Update the Dockerfile's PG_VERSION to match the Postgres version used by the target. 
-
-5. Deploy the app
+4. Deploy the app
 ```
 fly deploy .
 ```
 
-6. Initiate the migration process
+5. Initiate the migration process
 ```
 fly ssh console -C "migrate"
 ```
