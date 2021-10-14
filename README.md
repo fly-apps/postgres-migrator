@@ -7,14 +7,14 @@ Performs a `pg_dump` against a source database and restores it into the specifie
 
 ## How to perform the migration
 
-1. Clone this project and update the Dockerfile's `PG_VERSION` to match the Postgres version used by the target.
+1. Clone this project and update the Dockerfile's `PG_VERSION` to match the version of your target Postgres cluster.
 
 2. Specify the `SOURCE_DATABASE_URI` and `TARGET_DATABASE_URI` as secrets.
 ```shell
 # The source postgres database.
 fly secrets set SOURCE_DATABASE_URI=postgres://<user>:<password>@<hostname>:<port>/<database>
 
-# The target postgres database.
+# The target postgres database ( Leave off the database name, unless the database already exists ).
 fly secrets set TARGET_DATABASE_URI=postgres://<user>:<password>@<hostname>:<port>
 
 ```
