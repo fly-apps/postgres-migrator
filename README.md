@@ -31,7 +31,7 @@ fly ssh console -C "migrate"
 
 ## Recommendations
 
-* Make sure target app has a large enough volume and plenty of memory.  
+* Make sure target app has plenty of memory.  
 * Scale your destination app down to 1 before initiating the migration.  
 * If the migration looks like it has frozen, connect to your target postgres app and run  `\l+` a few times to make sure the data size is still growing.
 * If migration connection is broken, your target app is likely under scaled.  Monitor your metrics dashboard and your Fly app's vm checks for guidance.  
