@@ -10,6 +10,12 @@ Performs a `pg_dump` against a source database and restores it into the specifie
 
 2. Run `fly apps create --name postgres-migration-tool`
 
+3. Create a volume called `migration_data` in the same region as you did when you ran `fly apps create`
+
+```
+fly volumes create migration_data --region iad --size 20
+```
+
 3. Specify the `SOURCE_DATABASE_URI` and `TARGET_DATABASE_URI` as secrets.
 ```shell
 # The source postgres database.
