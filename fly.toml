@@ -1,6 +1,6 @@
 # fly.toml file generated for migration-app on 2021-10-13T19:32:25-05:00
 
-app = "migration-app"
+app = "draftbit-postgres-migration"
 
 kill_signal = "SIGINT"
 kill_timeout = 5
