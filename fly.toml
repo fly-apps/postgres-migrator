@@ -12,10 +12,6 @@ processes = []
 [experimental]
   auto_rollback = false
 
-[[mounts]]
-  destination = "/data"
-  source = "migration_data"
-
 [[services]]
   processes = ["app"]
   protocol = "tcp"
