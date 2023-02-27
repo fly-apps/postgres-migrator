@@ -1,6 +1,0 @@
-#!/bin/bash
-
-echo "Starting migration"
-pg_dump --no-owner -d $SOURCE_DATABASE_URI -C | psql -d $TARGET_DATABASE_URI 
-echo "All done!"
-

@@ -1,10 +1,18 @@
-ARG PG_VERSION=14.1
+ARG PG_VERSION=15.2
+
+FROM golang:1.19 as flyutil
+
+WORKDIR /go/src/github.com/fly-examples/fly-postgres
+COPY . .
+
+RUN CGO_ENABLED=0 GOOS=linux go build -v -o /fly/bin/migrate ./cmd/migrate
 
 FROM postgres:${PG_VERSION}
 
+LABEL fly.app_role=postgres-migrator
+
 RUN apt-get update && apt-get install --no-install-recommends -y \
-    ca-certificates curl bash dnsutils \
+    iproute2 curl bash dnsutils vim \
     && apt autoremove -y
 
-ADD ./migrate /usr/local/bin
-
+COPY --from=0 /fly/bin/* /usr/local/bin
