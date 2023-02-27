@@ -12,7 +12,7 @@ FROM postgres:${PG_VERSION}
 LABEL fly.app_role=postgres-migrator
 
 RUN apt-get update && apt-get install --no-install-recommends -y \
-    iproute2 curl bash dnsutils vim \
+    bash dnsutils \
     && apt autoremove -y
 
 COPY --from=0 /fly/bin/* /usr/local/bin
