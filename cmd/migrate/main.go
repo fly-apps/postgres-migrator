@@ -56,7 +56,7 @@ func main() {
 		panic("OPERATOR_PASSWORD and FLY_APP_NAME environment variables must be present")
 	}
 
-	targetURI := fmt.Sprintf("postgres://postgres:%s@%s:5432", operatorPass, appName)
+	targetURI := fmt.Sprintf("postgres://postgres:%s@%s.internal:5432", operatorPass, appName)
 
 	opts := migrationOpts{
 		sourceURI: sourceURI,
@@ -145,7 +145,6 @@ func runMigration(ctx context.Context, opts migrationOpts) error {
 	restoreStr := fmt.Sprintf("psql -d %s", opts.targetURI)
 	cmd := fmt.Sprintf("%s | %s", dumpStr, restoreStr)
 
-	log.Printf("[info] Running command: %s \n", cmd)
 	if _, err := runCommand(cmd); err != nil {
 		return fmt.Errorf("failed to run migration: %s", err)
 	}
