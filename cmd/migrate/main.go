@@ -24,28 +24,39 @@ type migrationOpts struct {
 }
 
 func main() {
-	var (
-		noOwner  = flag.Bool("no-owner", true, "")
-		clean    = flag.Bool("clean", true, "")
-		create   = flag.Bool("create", true, "")
-		dataOnly = flag.Bool("data-only", false, "")
-	)
-
-	flag.Parse()
-
+	ctx := context.Background()
 	log.SetFlags(0)
 
-	ctx := context.Background()
+	noOwner := flag.Bool("no-owner", true, "")
+	clean := flag.Bool("clean", true, "")
+	create := flag.Bool("create", true, "")
+	dataOnly := flag.Bool("data-only", false, "")
+
+	flag.Parse()
 
 	sourceURI := os.Getenv("SOURCE_DATABASE_URI")
 	if sourceURI == "" {
 		panic("SOURCE_DATABASE_URI secret is required")
 	}
 
-	targetURI := os.Getenv("TARGET_DATABASE_URI")
-	if targetURI == "" {
-		panic("TARGET_DATABASE_URI secret is required")
+	// Build Target URI from environment
+	operatorPass := os.Getenv("OPERATOR_PASSWORD")
+	if operatorPass == "" {
+		log.Println("[error] OPERATOR_PASSWORD secret must be set")
+		panic("OPERATOR_PASSWORD secret must be set")
 	}
+
+	appName := os.Getenv("FLY_APP_NAME")
+	if appName == "" {
+		log.Println("[error] FLY_APP_NAME environment varaible must be set")
+		panic("FLY_APP_NAME environment varaible must be set")
+	}
+
+	if operatorPass == "" || appName == "" {
+		panic("OPERATOR_PASSWORD and FLY_APP_NAME environment variables must be present")
+	}
+
+	targetURI := fmt.Sprintf("postgres://postgres:%s@%s:5432", operatorPass, appName)
 
 	opts := migrationOpts{
 		sourceURI: sourceURI,
@@ -56,13 +67,22 @@ func main() {
 		dataOnly:  *dataOnly,
 	}
 
+	log.Println("[info] Running pre-checks")
 	if err := runPreChecks(ctx, opts); err != nil {
-		panic(err)
+		log.Printf("[error] %s", err)
+		os.Exit(1)
+		return
 	}
+	log.Println("[info] Migration pre-checks have completed without issues")
 
+	log.Println("[info] Starting migration")
 	if err := runMigration(ctx, opts); err != nil {
-		panic(err)
+		log.Printf("[error] %s", err)
+		os.Exit(1)
+		return
 	}
+	log.Println("[info] Postgres migration has completed")
+
 }
 
 func runPreChecks(ctx context.Context, opts migrationOpts) error {
@@ -72,13 +92,13 @@ func runPreChecks(ctx context.Context, opts migrationOpts) error {
 		return fmt.Errorf("failed to connect to source: %s", err)
 	}
 	defer func() { _ = sourceConn.Close(ctx) }()
-	log.Println("Source connnection is healthy")
+	log.Println("[info] Source connnection is healthy")
 
 	targetConn, err := openConnection(ctx, opts.targetURI)
 	if err != nil {
 		return fmt.Errorf("failed to connect to target: %s", err)
 	}
-	log.Println("Target connnection is healthy")
+	log.Println("[info] Target connnection is healthy")
 
 	defer func() { _ = targetConn.Close(ctx) }()
 
@@ -88,14 +108,14 @@ func runPreChecks(ctx context.Context, opts migrationOpts) error {
 		return fmt.Errorf("failed to query source version: %s", err)
 	}
 
-	log.Println("Source PG version: " + sourceVersion)
+	log.Println("[info] Source PG version: " + sourceVersion)
 
 	var targetVersion string
 	if err := targetConn.QueryRow(ctx, "SHOW server_version;").Scan(&targetVersion); err != nil {
 		return fmt.Errorf("failed to query target version: %s", err)
 	}
 
-	log.Println("Target PG version: " + targetVersion)
+	log.Println("[info] Target PG version: " + targetVersion)
 
 	sourceSlice := strings.Split(sourceVersion, ".")
 	targetSlice := strings.Split(targetVersion, ".")
@@ -104,14 +124,10 @@ func runPreChecks(ctx context.Context, opts migrationOpts) error {
 		return fmt.Errorf("source is running a more recent version than target. expected >= %s, got %s", targetVersion, sourceVersion)
 	}
 
-	log.Println("Migration pre-checks have completed without issues.")
-
 	return nil
 }
 
 func runMigration(ctx context.Context, opts migrationOpts) error {
-	log.Println("Starting migration")
-
 	dumpStr := fmt.Sprintf("pg_dump -d %s", opts.sourceURI)
 	if opts.noOwner {
 		dumpStr = dumpStr + " --no-owner"
@@ -127,16 +143,12 @@ func runMigration(ctx context.Context, opts migrationOpts) error {
 	}
 
 	restoreStr := fmt.Sprintf("psql -d %s", opts.targetURI)
-
 	cmd := fmt.Sprintf("%s | %s", dumpStr, restoreStr)
 
-	log.Printf("Running command: %s \n", cmd)
-
+	log.Printf("[info] Running command: %s \n", cmd)
 	if _, err := runCommand(cmd); err != nil {
-		return err
+		return fmt.Errorf("failed to run migration: %s", err)
 	}
-
-	log.Println("Postgres migration has completed")
 
 	return nil
 }
@@ -147,7 +159,7 @@ func openConnection(parentCtx context.Context, uri string) (*pgx.Conn, error) {
 
 	conf, err := pgx.ParseConfig(uri)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to parse uri: %s", err)
 	}
 
 	conf.ConnectTimeout = 5 * time.Second

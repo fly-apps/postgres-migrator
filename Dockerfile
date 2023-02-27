@@ -1,6 +1,6 @@
 ARG PG_VERSION=15.2
 
-FROM golang:1.19 as flyutil
+FROM golang:1.20 as flyutil
 
 WORKDIR /go/src/github.com/fly-examples/fly-postgres
 COPY . .
