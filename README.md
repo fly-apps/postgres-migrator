@@ -1,5 +1,9 @@
 # postgres-migrator
 
+**This project is deprecated in favor of: [Postgers Importer](https://github.com/fly-apps/postgres-importer)**
+
+
+
 ## How it works
 
 Performs a `pg_dump` against a source database and restores it into the specified target.
